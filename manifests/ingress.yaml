@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ngo-service
+  namespace: solidarytech-ngo
+  labels:
+    app.kubernetes.io/name: ngo-service
+    app.kubernetes.io/component: ngo
+    app.kubernetes.io/part-of: solidarytech
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    # Path público no singular (/ngo) -> rota real da app (/ngos).
+    nginx.ingress.kubernetes.io/rewrite-target: /ngos$1$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: solidarytech.pt
+      http:
+        paths:
+          - path: /ngo(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ngo-service
+                port:
+                  number: 8081
