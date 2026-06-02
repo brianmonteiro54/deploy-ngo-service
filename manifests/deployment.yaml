@@ -86,7 +86,7 @@ spec:
       containers:
         - name: ngo-service
           # Tag atualizada automaticamente pelo CI do repo ngo-service.
-          image: ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/solidarytech/ngo-service:latest
+          image: 042702827117.dkr.ecr.us-east-1.amazonaws.com/solidarytech/ngo-service:11f03926096a2fc29cd289b9637404fa1db4b25b
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
