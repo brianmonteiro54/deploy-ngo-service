@@ -10,7 +10,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: ngo-service
@@ -27,6 +26,21 @@ spec:
         app.kubernetes.io/component: ngo
         app.kubernetes.io/part-of: solidarytech
     spec:
+      # Espalha réplicas entre AZs e entre nós (soft): sobrevive a falha
+      # de um nó/AZ sem derrubar todas as réplicas de uma vez.
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: ngo-service
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: ngo-service
       initContainers:
         - name: build-db-url
           image: python:3.12-alpine

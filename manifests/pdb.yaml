@@ -1,0 +1,18 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ngo-service
+  namespace: solidarytech-ngo
+  labels:
+    app.kubernetes.io/name: ngo-service
+    app.kubernetes.io/component: ngo
+    app.kubernetes.io/part-of: solidarytech
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  # Permite no máximo 1 pod fora por vez em disrupção VOLUNTÁRIA (drain/upgrade)
+  # → mantém o resto no ar. Com 2 réplicas mantém >=1; se o HPA subir p/ 5, mantém >=4.
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: ngo-service

@@ -1,0 +1,30 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ngo-service
+  namespace: solidarytech-ngo
+  labels:
+    app.kubernetes.io/name: ngo-service
+    app.kubernetes.io/component: ngo
+    app.kubernetes.io/part-of: solidarytech
+  annotations:
+    # HPA entra depois do Deployment (wave 2)
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ngo-service
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+  behavior:
+    scaleDown:
+      # espera 5 min de estabilidade antes de reduzir (evita flapping)
+      stabilizationWindowSeconds: 300
